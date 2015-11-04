@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/josjac/ilumina-gulp-sprites.git"
+    "url": "git+https://github.com/josjac/ilumina-gulp-templates.git"
   },
   "keywords": [
     "gulp",
@@ -29,7 +29,7 @@
   "author": "JOZ <josalfredyon@gmail.com>",
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/josjac/ilumina-gulp-sprites/issues"
+    "url": "https://github.com/josjac/ilumina-gulp-templates/issues"
   },
-  "homepage": "https://github.com/josjac/ilumina-gulp-sprites#readme"
+  "homepage": "https://github.com/josjac/ilumina-gulp-templates#readme"
 }
