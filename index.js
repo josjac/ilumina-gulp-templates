@@ -38,7 +38,7 @@ var self = {
   config: default_config,
   handler: handler,
   run: function(config) {
-    config = config || this.config;
+    config = _.assign(this.config, config);
     config.handler = _.assign(this.handler, config.handler);
     return templates(config);
   }
@@ -77,12 +77,13 @@ function condition(file) {
 
 function templates(config) {
   return gulp.src(config.src)
-    .pipe(jade({
-      locals: {
-        handler: config.handler || {}
-      },
-      pretty: (yargs.prod) ? false : true
-    }))
+
+  .pipe(jade({
+    locals: {
+      handler: config.handler || {}
+    },
+    pretty: (yargs.prod) ? false : true
+  }))
 
   .pipe(gulpif(yargs.prod, htmlMin()))
 
