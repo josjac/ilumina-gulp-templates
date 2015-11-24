@@ -1,16 +1,8 @@
-/*
- * configuracion:
- *[
- *  {
- *    src: ['!src/templates/client/**', 'src/templates/*.jade'],
- *    dest: 'dist'
- *  }
- *]
- */
-
 var gulp = require('gulp');
 
 var path = require('path');
+
+var fs = require('fs');
 
 var gulpif = require('gulp-if');
 
@@ -19,6 +11,8 @@ var jade = require('gulp-jade');
 var htmlMin = require('gulp-htmlmin');
 
 var yargs = require('yargs').argv;
+
+var _ = require('lodash');
 
 var cwd = process.cwd();
 
@@ -30,6 +24,49 @@ var default_config = {
   dest: path.join(cwd, 'dist')
 };
 
+var handler = {
+  env: '',
+  static_path: 'static/',
+  getFile: getFile,
+  getJSON: getJSON,
+  static_url: function(path, base_path) {
+    return staticURL(path, base_path || this.static_path);
+  }
+};
+
+var self = {
+  config: default_config,
+  handler: handler,
+  run: function(config) {
+    config = config || this.config;
+    config.handler = _.assign(this.handler, config.handler);
+    return templates(config);
+  }
+};
+
+function getFile(path) {
+  return fs.readFileSync(path, {
+    encoding: 'utf-8'
+  });
+}
+
+function getJSON(path) {
+  var str = getFile(path);
+  if (str) {
+    return JSON.parse(str);
+  }
+
+  return {};
+}
+
+function staticURL(path, base_path) {
+  if (this.env === 'jinja') {
+    return "{{ handler.static_url('" + path + "') }}";
+  }
+
+  return base_path + path;
+}
+
 function condition(file) {
   if (file.relative.indexOf('/_') !== -1 || file.relative.indexOf('_') === 0) {
     return false;
@@ -38,26 +75,22 @@ function condition(file) {
   }
 }
 
-module.exports = function(configs) {
-  gulp.task('templates', function() {
-    configs = configs || [default_config];
+function templates(config) {
+  return gulp.src(config.src)
+    .pipe(jade({
+      locals: {
+        handler: config.handler || {}
+      },
+      pretty: (yargs.prod) ? false : true
+    }))
 
-    configs.forEach(function(config) {
-      config.handler = config.handler || {};
+  .pipe(gulpif(yargs.prod, htmlMin()))
 
-      config.yargs = yargs || {};
+  .pipe(gulpif(condition, gulp.dest(config.dest)));
+}
 
-      gulp.src(config.src)
-        .pipe(jade({
-          locals: {
-            handler: config.handler
-          },
-          pretty: (yargs.prod) ? false : true
-        }))
+gulp.task('templates', function() {
+  self.run();
+});
 
-      .pipe(gulpif(yargs.prod, htmlMin()))
-
-      .pipe(gulpif(condition, gulp.dest(config.dest)));
-    });
-  });
-};
+module.exports = self;

@@ -12,6 +12,7 @@
     "gulp-htmlmin": "^1.2.0",
     "gulp-if": "^1.2.5",
     "gulp-jade": "^1.1.0",
+    "lodash": "^3.10.1",
     "yargs": "^3.5.4"
   },
   "devDependencies": {},
