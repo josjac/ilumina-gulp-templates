@@ -26,6 +26,8 @@ var default_config = {
 
 var handler = {
   env: '',
+  argv: yargs,
+  src_path: cwd,
   static_path: 'static/',
   getFile: getFile,
   getJSON: getJSON,
@@ -37,8 +39,11 @@ var handler = {
 var self = {
   config: default_config,
   handler: handler,
+  set: function(config) {
+    this.config = _.assign(this.config, config);
+  },
   run: function(config) {
-    config = _.assign(this.config, config);
+    config = config || this.config;
     config.handler = _.assign(this.handler, config.handler);
     return templates(config);
   }
