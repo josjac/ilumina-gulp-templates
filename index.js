@@ -19,7 +19,8 @@ var cwd = process.cwd();
 var default_config = {
   src: [
     '!' + path.join(cwd, 'src', 'templates', 'client', '**'),
-    path.join(cwd, 'src', 'templates', '*.jade')
+    '!' + path.join(cwd, 'src', 'templates', '**', '_*.jade'),
+    path.join(cwd, 'src', 'templates', '**', '*.jade')
   ],
   dest: path.join(cwd, 'dist')
 };
@@ -72,31 +73,22 @@ function staticURL(path, base_path) {
   return base_path + path;
 }
 
-function condition(file) {
-  if (file.relative.indexOf('/_') !== -1 || file.relative.indexOf('_') === 0) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
 function templates(config) {
   return gulp.src(config.src)
-
-  .pipe(jade({
-    locals: {
-      handler: config.handler || {}
-    },
-    pretty: (yargs.prod) ? false : true
-  }))
-
-  .pipe(gulpif(yargs.prod, htmlMin()))
-
-  .pipe(gulpif(condition, gulp.dest(config.dest)));
+  .pipe(
+    jade({
+      locals: {
+        handler: config.handler || {}
+      },
+      pretty: (yargs.prod) ? false : true
+    })
+  )
+  .pipe(gulpif(yargs.prod, htmlMin()));
 }
 
 gulp.task('templates', function() {
-  self.run();
+  self.run()
+  .pipe(gulp.dest(self.config.dest));
 });
 
 module.exports = self;
