@@ -33,7 +33,7 @@ var handler = {
   getFile: getFile,
   getJSON: getJSON,
   static_url: function(path, base_path) {
-    return staticURL(path, base_path || this.static_path);
+    return staticURL.call(this, path, base_path || this.static_path);
   }
 };
 
