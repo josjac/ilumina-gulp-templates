@@ -6,7 +6,7 @@ var fs = require('fs');
 
 var gulpif = require('gulp-if');
 
-var jade = require('gulp-jade');
+var pug = require('gulp-pug');
 
 var htmlMin = require('gulp-htmlmin');
 
@@ -19,8 +19,8 @@ var cwd = process.cwd();
 var default_config = {
   src: [
     '!' + path.join(cwd, 'src', 'templates', 'client', '**'),
-    '!' + path.join(cwd, 'src', 'templates', '**', '_*.jade'),
-    path.join(cwd, 'src', 'templates', '**', '*.jade')
+    '!' + path.join(cwd, 'src', 'templates', '**', '_*.pug'),
+    path.join(cwd, 'src', 'templates', '**', '*.pug')
   ],
   dest: path.join(cwd, 'dist')
 };
@@ -76,7 +76,7 @@ function staticURL(path, base_path) {
 function templates(config) {
   return gulp.src(config.src)
   .pipe(
-    jade({
+    pug({
       locals: {
         handler: config.handler || {}
       },
